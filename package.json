@@ -1,0 +1,33 @@
+{
+  "name": "agentic-os-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Marketing and knowledge site for Agentic OS - a local-first memory-and-tool backend for AI agents.",
+  "license": "MIT",
+  "author": "Ibrahem Alkurdi <ibrahem.alkurdi@gwmail.gwu.edu>",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/archivo": "^5.2.5",
+    "@fontsource-variable/jetbrains-mono": "^5.2.5",
+    "@phosphor-icons/react": "^2.1.10",
+    "motion": "^12.23.12",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.9.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.0.2",
+    "tailwindcss": "^4.1.13",
+    "typescript": "~5.8.3",
+    "vite": "^7.1.5"
+  }
+}
