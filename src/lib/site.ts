@@ -6,10 +6,13 @@ export const APP_NAME = 'Agentic OS'
 export const APP_VERSION = '0.1.0'
 
 export const APP_REPO = 'https://github.com/Ibrahem-al/agentic-os'
-export const APP_RELEASES = 'https://github.com/Ibrahem-al/agentic-os/releases'
-export const APP_RELEASES_LATEST =
-  'https://github.com/Ibrahem-al/agentic-os/releases/latest'
 export const SITE_REPO = 'https://github.com/Ibrahem-al/agentic-os-web'
+
+// The Windows installer is published as a release on the public website repo,
+// so anonymous visitors can download it (the app repo is private).
+export const RELEASES = 'https://github.com/Ibrahem-al/agentic-os-web/releases'
+export const WIN_INSTALLER_URL =
+  'https://github.com/Ibrahem-al/agentic-os-web/releases/download/v0.1.0/agentic-os-0.1.0-win-x64.exe'
 
 // The MCP surface — 127.0.0.1:4517, bearer auth (config.ts defaults).
 export const MCP_URL = 'http://127.0.0.1:4517/mcp'

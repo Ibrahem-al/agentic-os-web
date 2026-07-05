@@ -11,7 +11,7 @@ import {
 } from '@phosphor-icons/react'
 import { Container, Reveal, SectionTitle, Callout } from '../components/site/primitives'
 import { CodeBlock } from '../components/site/CodeBlock'
-import { detectPlatform, type Platform, APP_RELEASES_LATEST, APP_REPO, APP_VERSION, ARTIFACT } from '../lib/site'
+import { detectPlatform, type Platform, WIN_INSTALLER_URL, RELEASES, APP_REPO, APP_VERSION, ARTIFACT } from '../lib/site'
 
 type IconCmp = React.ComponentType<{
   size?: number
@@ -23,12 +23,14 @@ const PLATFORMS: {
   key: Platform
   name: string
   icon: IconCmp
+  mode: 'download' | 'build'
+  installerUrl?: string
   artifact: string
   note: string
 }[] = [
-  { key: 'mac', name: 'macOS', icon: AppleLogo, artifact: `${ARTIFACT.macArm} · ${ARTIFACT.macX64}`, note: 'Apple Silicon and Intel. Unsigned: right-click → Open on first launch.' },
-  { key: 'windows', name: 'Windows', icon: WindowsLogo, artifact: ARTIFACT.win, note: 'NSIS installer, per-user, no elevation prompt.' },
-  { key: 'linux', name: 'Linux', icon: LinuxLogo, artifact: `${ARTIFACT.linuxAppImage} · ${ARTIFACT.linuxDeb}`, note: 'AppImage or Debian package.' },
+  { key: 'mac', name: 'macOS', icon: AppleLogo, mode: 'build', artifact: `${ARTIFACT.macArm} · ${ARTIFACT.macX64}`, note: 'Apple Silicon or Intel. Build the .dmg on a Mac; the build is unsigned, so right-click → Open on first launch.' },
+  { key: 'windows', name: 'Windows', icon: WindowsLogo, mode: 'download', installerUrl: WIN_INSTALLER_URL, artifact: `${ARTIFACT.win} · 152 MB`, note: 'NSIS installer, per-user, no elevation prompt. Ready to download and run.' },
+  { key: 'linux', name: 'Linux', icon: LinuxLogo, mode: 'build', artifact: `${ARTIFACT.linuxAppImage} · ${ARTIFACT.linuxDeb}`, note: 'Build the AppImage or Debian package from source.' },
 ]
 
 function DownloadCard({ p, primary }: { p: (typeof PLATFORMS)[number]; primary: boolean }) {
@@ -48,18 +50,25 @@ function DownloadCard({ p, primary }: { p: (typeof PLATFORMS)[number]; primary: 
       </div>
       <p className="mt-3 flex-1 text-[13px] leading-relaxed text-ink-mute">{p.note}</p>
       <div className="mt-2 font-mono text-[10.5px] break-all text-ink-faint">{p.artifact}</div>
-      <a
-        href={APP_RELEASES_LATEST}
-        target="_blank"
-        rel="noreferrer"
-        className={`mt-4 flex h-10 items-center justify-center gap-2 rounded-md text-[13.5px] font-semibold transition-colors active:translate-y-px ${
-          primary
-            ? 'bg-accent text-accent-ink hover:bg-accent/85'
-            : 'border border-line-strong text-ink hover:bg-raised'
-        }`}
-      >
-        <DownloadSimple size={16} weight="bold" /> Download for {p.name}
-      </a>
+      {p.mode === 'download' ? (
+        <a
+          href={p.installerUrl}
+          className={`mt-4 flex h-10 items-center justify-center gap-2 rounded-md text-[13.5px] font-semibold transition-colors active:translate-y-px ${
+            primary
+              ? 'bg-accent text-accent-ink hover:bg-accent/85'
+              : 'border border-line-strong text-ink hover:bg-raised'
+          }`}
+        >
+          <DownloadSimple size={16} weight="bold" /> Download for {p.name}
+        </a>
+      ) : (
+        <a
+          href="#build"
+          className="mt-4 flex h-10 items-center justify-center gap-2 rounded-md border border-line-strong text-[13.5px] font-medium text-ink transition-colors hover:bg-raised active:translate-y-px"
+        >
+          <Terminal size={16} /> Build from source
+        </a>
+      )}
     </div>
   )
 }
@@ -92,18 +101,18 @@ export function DownloadPage() {
           </div>
 
           <p className="mt-5 text-[12.5px] text-ink-faint">
-            Installers are published to{' '}
-            <a href={APP_RELEASES_LATEST} target="_blank" rel="noreferrer" className="text-accent hover:underline">
+            The Windows installer is published to{' '}
+            <a href={RELEASES} target="_blank" rel="noreferrer" className="text-accent hover:underline">
               GitHub Releases
             </a>
-            . Each build produces Windows NSIS, macOS dmg and zip (arm64 + x64), and Linux AppImage and
-            deb.
+            . macOS and Linux builds are produced from source with electron-builder (dmg and zip on a
+            Mac; AppImage and deb on Linux).
           </p>
         </Container>
       </section>
 
       {/* build from source */}
-      <section className="border-b border-line py-16 sm:py-20">
+      <section id="build" className="scroll-mt-20 border-b border-line py-16 sm:py-20">
         <Container>
           <Reveal>
             <div className="flex items-center gap-2 font-mono text-[11px] text-accent">
@@ -111,8 +120,9 @@ export function DownloadPage() {
             </div>
             <SectionTitle className="mt-2">Build it yourself</SectionTitle>
             <p className="mt-4 max-w-[62ch] text-[15px] leading-relaxed text-ink-mute">
-              The same steps work on macOS, Windows, and Linux. The native rebuild is the one thing to
-              get right: it makes the embedded graph engine and SQLite load under Electron.
+              The macOS and Linux installers are built this way, and the same steps rebuild Windows
+              too. The native rebuild is the one thing to get right: it makes the embedded graph engine
+              and SQLite load under Electron.
             </p>
           </Reveal>
 
