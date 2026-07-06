@@ -17,7 +17,7 @@ const FLOW = [
   { t: 'bearer auth', d: 'timing-safe' },
   { t: 'dispatchTool', d: 'the chokepoint' },
   { t: 'kernel.execute', d: 'permission + span' },
-  { t: 'tool.handle', d: '1 of 7' },
+  { t: 'tool.handle', d: '1 of ~38' },
   { t: 'mcp_calls', d: 'always logged' },
 ]
 
@@ -27,7 +27,7 @@ export function Mcp() {
       <DocHeader
         kicker="system design"
         title="MCP server & connection"
-        intro="The Model Context Protocol server is the app's inbound surface. Claude Code, or any MCP client, connects over loopback HTTP with a bearer token and calls one of seven tools. Every call is mediated by the kernel and logged to a server-side ledger. This is the reliable backbone the whole system learns from."
+        intro="The Model Context Protocol server is the app's inbound surface. Claude Code, or any MCP client, connects over loopback HTTP with a bearer token and calls one of ~38 tools — reads, staged-write proposals, and control triggers. Every call is mediated by the kernel and logged to a server-side ledger. This is the reliable backbone the whole system learns from."
       />
 
       <DocProse>
@@ -81,11 +81,16 @@ export function Mcp() {
       </div>
 
       <DocProse>
-        <H2>The seven tools</H2>
+        <H2>The tool surface</H2>
         <P>
-          Exactly seven, no others. zod schemas are the validators, and{' '}
-          <Code>z.toJSONSchema()</Code> derives the advertised <Code>tools/list</Code> schema from the
-          same definition, so validation and advertisement can never drift. Five are read-only.
+          The original v1 surface is the seven tools below. It has since grown to about 38 — read
+          tools for every dashboard view, staged-write tools that drive the whole learning loop, and
+          control tools that trigger sanctioned internal jobs — but the shape never changes:{' '}
+          <Strong>reads open, writes land only as staged proposals, and the human-gated approve /
+          reject / undo / grant decisions stay off the tool surface entirely.</Strong> zod schemas are
+          the validators, and <Code>z.toJSONSchema()</Code> derives the advertised{' '}
+          <Code>tools/list</Code> schema from the same definition, so validation and advertisement can
+          never drift. The seven originals, most of them read-only:
         </P>
         <SpecTable
           head={['tool', 'access', 'what it does']}

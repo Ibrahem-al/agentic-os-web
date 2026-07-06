@@ -71,14 +71,14 @@ function TheLoop() {
                 Agentic OS remembers it.
               </SectionTitle>
               <Lead className="mt-5">
-                Everything runs on your machine, in one embedded graph store. Claude reads and
+                Your memory lives on your machine, in one embedded graph store. Claude reads and
                 retrieves live over MCP; its only write path is a staged correction a human approves.
                 Nothing is a black box, and nothing is irreversible.
               </Lead>
               <div className="mt-8 flex flex-wrap gap-x-10 gap-y-6">
-                <Stat value="7" label="MCP tools served" accent />
+                <Stat value="38" label="MCP tools served" accent />
                 <Stat value="1" label="write lane, provenance stamped" />
-                <Stat value="100%" label="on your machine, offline-capable" />
+                <Stat value="100%" label="local memory & retrieval, offline-capable" />
               </div>
             </Reveal>
           </div>
@@ -195,8 +195,8 @@ function Capabilities() {
               </div>
             }
           >
-            Seven tools over a loopback HTTP server with bearer auth. Every call is logged to the
-            server-side ledger. Five are read-only; the one write path stages a correction for review.
+            38 tools over a loopback HTTP server with bearer auth. Every call is logged to the
+            server-side ledger. Reads open; writes land only as staged proposals a human approves.
           </CapCard>
 
           <CapCard
@@ -297,7 +297,7 @@ function Connect() {
     {
       n: '03',
       title: 'Add a cloud key (optional)',
-      body: 'A bring-your-own key powers fuzzy-extraction escalation, independent verification, and skill rewrites. Everything else works fully offline.',
+      body: 'A bring-your-own key — or your Claude subscription (opt-in, off by default) — powers fuzzy-extraction escalation, independent verification, and skill rewrites. Retrieval, embeddings, and reranking always stay local.',
       code: '# Settings → provider + set key → restart\n# stored via the OS keychain (safeStorage), never plaintext\n# metered with a $0.50-per-task ceiling',
       label: 'what it does',
     },
@@ -379,7 +379,7 @@ function Safety() {
         </Reveal>
         <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { v: 'local', l: 'The graph store, the models, and the keys never leave your machine. A cloud key is optional.' },
+            { v: 'local', l: 'Your memory graph, embeddings, and search index never leave your machine, and retrieval runs fully local. Reasoning is bring-your-own — an optional cloud key or your Claude subscription, off by default.' },
             { v: 'staged', l: "Claude's only write path is a proposed correction, validated and human-approved before it touches memory." },
             { v: 'sandboxed', l: 'Rule code runs in a Deno permission sandbox or a deny-by-default Docker container, never on the host.' },
             { v: 'undoable', l: 'Every agent write logs a reversible delta. The graph is backed up before any migration runs.' },

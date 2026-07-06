@@ -184,7 +184,7 @@ npm run package         # electron-builder → dist/
               },
               {
                 title: 'A cloud API key',
-                body: 'Anthropic, OpenAI, Gemini, or OpenRouter. Powers extraction escalation, verification, and skill rewrites. Everything else works fully offline. Stored in the OS keychain, metered with a $0.50-per-task ceiling.',
+                body: 'Anthropic, OpenAI, Gemini, or OpenRouter — or point the OS\'s background reasoning at your Claude subscription instead (opt-in, off by default). Powers extraction escalation, verification, and skill rewrites. Retrieval, embeddings, and reranking always stay local. Stored in the OS keychain, metered with a $0.50-per-task ceiling.',
                 req: 'optional',
               },
               {

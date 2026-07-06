@@ -70,7 +70,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center">
           <p className="font-mono text-[11px] text-ink-faint">
-            MIT licensed. Runs fully on your machine.
+            MIT licensed. Local-first — your memory never leaves your machine.
           </p>
           <a
             href={APP_REPO}

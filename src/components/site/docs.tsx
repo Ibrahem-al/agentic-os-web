@@ -22,7 +22,7 @@ export const DOC_NAV: DocGroup[] = [
     title: 'system design',
     links: [
       { to: '/learn/architecture', label: 'Architecture', blurb: 'The layered system, boot order, and data flow.' },
-      { to: '/learn/mcp', label: 'MCP server & connection', blurb: 'Transport, auth, the seven tools, and how Claude connects.' },
+      { to: '/learn/mcp', label: 'MCP server & connection', blurb: 'Transport, auth, the tool surface, and how Claude connects.' },
     ],
   },
   {

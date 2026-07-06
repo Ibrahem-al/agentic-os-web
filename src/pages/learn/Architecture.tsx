@@ -28,7 +28,7 @@ export function Architecture() {
       <DocHeader
         kicker="system design"
         title="Architecture"
-        intro="Agentic OS is a local-first Electron desktop app that serves memory and tools to an external AI orchestrator. Claude connects over MCP and does the work; the app serves context on demand, learns from finished sessions, and runs background agents. Everything lives on your machine in one embedded graph store."
+        intro="Agentic OS is a local-first Electron desktop app that serves memory and tools to an external AI orchestrator. Claude connects over MCP and does the work; the app serves context on demand, learns from finished sessions, and runs background agents. The memory graph, embeddings, and search index live on your machine; the reasoning tier is bring-your-own — local models by default, an optional cloud key or your Claude subscription for the heavy lifting."
       />
 
       <DocProse>
@@ -136,7 +136,8 @@ export function Architecture() {
         />
 
         <Callout tone="accent" title="Claude's only write path">
-          Of the seven MCP tools, five are read-only. <Code>propose_correction</Code> writes a row to
+          Of the ~38 MCP tools, most are read-only; the rest stage proposals or trigger sanctioned
+          jobs. <Code>propose_correction</Code> writes a row to
           the SQLite <Code>staged_writes</Code> table, never the graph. The correction becomes real
           only after a human approves it in the review queue. &quot;Claude is confident&quot; is not
           itself a permission check.
