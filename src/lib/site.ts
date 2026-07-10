@@ -3,7 +3,10 @@
 // (owner: Ibrahem-al, repo: agentic-os).
 
 export const APP_NAME = 'Agentic OS'
-export const APP_VERSION = '0.1.1'
+// Pinned FALLBACK version — the download page fetches the real latest release
+// from the GitHub API at runtime (fetchLatestRelease), so this only shows when
+// that fetch fails. Keep it roughly current, but it no longer gates downloads.
+export const APP_VERSION = '0.1.3'
 
 export const APP_REPO = 'https://github.com/Ibrahem-al/agentic-os'
 export const SITE_REPO = 'https://github.com/Ibrahem-al/agentic-os-web'
@@ -30,6 +33,48 @@ export const ARTIFACT = {
   linuxAppImage: `agentic-os-${APP_VERSION}-linux-x86_64.AppImage`,
   linuxDeb: `agentic-os-${APP_VERSION}-linux-amd64.deb`,
 } as const
+
+/** The latest published release, resolved live from the GitHub API. */
+export interface LatestRelease {
+  /** e.g. '0.1.3' (tag with the leading v stripped). */
+  version: string
+  /** Direct download URL of the Windows installer asset. */
+  winUrl: string
+  /** Asset filename, e.g. 'agentic-os-0.1.3-win-x64.exe'. */
+  winName: string
+  /** Human-readable size, e.g. '152 MB'. */
+  winSize: string
+}
+
+/**
+ * Resolve the latest release + its Windows installer from the public GitHub
+ * API (CORS-enabled, no auth for public repos). Returns null on ANY failure —
+ * callers fall back to the pinned APP_VERSION constants, so the download
+ * button always works even if the API is rate-limited or unreachable.
+ */
+export async function fetchLatestRelease(): Promise<LatestRelease | null> {
+  try {
+    const res = await fetch('https://api.github.com/repos/Ibrahem-al/agentic-os/releases/latest', {
+      headers: { Accept: 'application/vnd.github+json' },
+    })
+    if (!res.ok) return null
+    const release = (await res.json()) as {
+      tag_name?: string
+      assets?: { name: string; browser_download_url: string; size: number }[]
+    }
+    const tag = release.tag_name
+    const win = release.assets?.find((a) => a.name.endsWith('-win-x64.exe'))
+    if (!tag || !win) return null
+    return {
+      version: tag.replace(/^v/, ''),
+      winUrl: win.browser_download_url,
+      winName: win.name,
+      winSize: `${Math.round(win.size / 1_000_000)} MB`,
+    }
+  } catch {
+    return null
+  }
+}
 
 export type Platform = 'mac' | 'windows' | 'linux' | 'unknown'
 

@@ -11,7 +11,17 @@ import {
 } from '@phosphor-icons/react'
 import { Container, Reveal, SectionTitle, Callout } from '../components/site/primitives'
 import { CodeBlock } from '../components/site/CodeBlock'
-import { detectPlatform, type Platform, WIN_INSTALLER_URL, RELEASES, APP_REPO, APP_VERSION, ARTIFACT } from '../lib/site'
+import {
+  detectPlatform,
+  fetchLatestRelease,
+  type LatestRelease,
+  type Platform,
+  WIN_INSTALLER_URL,
+  RELEASES,
+  APP_REPO,
+  APP_VERSION,
+  ARTIFACT,
+} from '../lib/site'
 
 type IconCmp = React.ComponentType<{
   size?: number
@@ -77,7 +87,25 @@ export function DownloadPage() {
   const [platform, setPlatform] = useState<Platform>('unknown')
   useEffect(() => setPlatform(detectPlatform()), [])
 
-  const ordered = [...PLATFORMS].sort((a) => (a.key === platform ? -1 : 0))
+  // The real latest release, resolved live so the site never serves a stale
+  // installer again; the pinned APP_VERSION constants are the fallback.
+  const [latest, setLatest] = useState<LatestRelease | null>(null)
+  useEffect(() => {
+    let cancelled = false
+    void fetchLatestRelease().then((r) => {
+      if (!cancelled && r !== null) setLatest(r)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const shownVersion = latest?.version ?? APP_VERSION
+  const withLatest = (p: (typeof PLATFORMS)[number]): (typeof PLATFORMS)[number] =>
+    p.key === 'windows' && latest !== null
+      ? { ...p, installerUrl: latest.winUrl, artifact: `${latest.winName} · ${latest.winSize}` }
+      : p
+  const ordered = [...PLATFORMS].sort((a) => (a.key === platform ? -1 : 0)).map(withLatest)
 
   return (
     <div>
@@ -90,7 +118,7 @@ export function DownloadPage() {
             </h1>
             <p className="mt-5 text-[clamp(1rem,1.6vw,1.2rem)] leading-relaxed text-ink-mute">
               Free and MIT-licensed. Installers for macOS and Windows, or build it from source in a
-              few commands. Version {APP_VERSION}.
+              few commands. Version {shownVersion}.
             </p>
           </div>
 
