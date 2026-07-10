@@ -6,7 +6,7 @@ export const APP_NAME = 'Agentic OS'
 // Pinned FALLBACK version — the download page fetches the real latest release
 // from the GitHub API at runtime (fetchLatestRelease), so this only shows when
 // that fetch fails. Keep it roughly current, but it no longer gates downloads.
-export const APP_VERSION = '0.1.4'
+export const APP_VERSION = '0.1.5'
 
 export const APP_REPO = 'https://github.com/Ibrahem-al/agentic-os'
 export const SITE_REPO = 'https://github.com/Ibrahem-al/agentic-os-web'

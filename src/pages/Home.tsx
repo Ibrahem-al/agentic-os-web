@@ -413,7 +413,7 @@ function Durable() {
     },
     {
       v: 'crash-safe',
-      l: 'A torn or corrupt graph WAL from a hard kill is quarantined and preserved — never deleted — and the store recovers to its last checkpoint. Periodic checkpointing bounds worst-case loss to about two minutes; boot diagnostics show why any subsystem is degraded.',
+      l: 'A torn or corrupt graph WAL from a hard kill is quarantined and preserved — never deleted — and the store recovers to its last checkpoint. Periodic checkpointing bounds worst-case loss to about two minutes; boot diagnostics show why any subsystem is degraded. Launch it again while it is running and the existing window comes forward instead of a second, doomed process; if a subsystem is down, one Reconnect button re-runs the whole failed stack in dependency order — no restart needed.',
     },
     {
       v: 'self-updating',

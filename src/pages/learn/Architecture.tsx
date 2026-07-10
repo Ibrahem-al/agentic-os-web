@@ -13,7 +13,7 @@ import { Callout } from '../../components/site/primitives'
 import { ArchitectureStack } from '../../components/marketing/ArchitectureStack'
 
 const BOOT = [
-  ['bootStorage()', 'Apply any launch-staged graph operation (backup / restore / reset) and recover or quarantine a torn WAL before opening anything, then open appdata.db (SQLite/WAL) and the RyuGraph engine with its vendored vector/FTS extensions by absolute path.'],
+  ['bootStorage()', 'Apply any launch-staged graph operation (backup / restore / reset) and recover or quarantine a torn WAL before opening anything, then open appdata.db (SQLite/WAL) and the RyuGraph engine with its vendored vector/FTS extensions by absolute path. If a previous process is still releasing its exclusive lock, opening retries for about ten seconds before it gives up.'],
   ['bootModels()', 'Keychain (auto-generates the MCP bearer token), settings, then Ollama detection: ready / models-missing / daemon-not-running.'],
   ['bootKernel()', 'Telemetry, the permission engine + audit log + injection scanner, the Kernel, the LangGraph runner, and the context manager.'],
   ['bootMcp()', 'Build the shared reranker + retriever, start the MCP server on 127.0.0.1:4517. EADDRINUSE just disables MCP for that launch.'],
@@ -81,7 +81,10 @@ export function Architecture() {
         <P>
           Each stage is wrapped in its own try/catch and logs a boot line; a failed subsystem never
           aborts the rest of boot. The window is created <Strong>last</Strong>, so the dashboard reads
-          a fully (or partially) booted system.
+          a fully (or partially) booted system. A second launch focuses the running window rather than
+          starting a doomed process — the graph holds an exclusive OS lock a second instance could
+          never take — and when a subsystem is down the dashboard&apos;s <Strong>Reconnect</Strong>{' '}
+          button re-runs the failed stack, in the same dependency order, without a restart.
         </P>
       </DocProse>
 
