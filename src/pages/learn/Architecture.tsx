@@ -13,7 +13,7 @@ import { Callout } from '../../components/site/primitives'
 import { ArchitectureStack } from '../../components/marketing/ArchitectureStack'
 
 const BOOT = [
-  ['bootStorage()', 'Open appdata.db (SQLite/WAL), then the RyuGraph engine and its vendored vector/FTS extensions by absolute path.'],
+  ['bootStorage()', 'Apply any launch-staged graph operation (backup / restore / reset) and recover or quarantine a torn WAL before opening anything, then open appdata.db (SQLite/WAL) and the RyuGraph engine with its vendored vector/FTS extensions by absolute path.'],
   ['bootModels()', 'Keychain (auto-generates the MCP bearer token), settings, then Ollama detection: ready / models-missing / daemon-not-running.'],
   ['bootKernel()', 'Telemetry, the permission engine + audit log + injection scanner, the Kernel, the LangGraph runner, and the context manager.'],
   ['bootMcp()', 'Build the shared reranker + retriever, start the MCP server on 127.0.0.1:4517. EADDRINUSE just disables MCP for that launch.'],
@@ -109,9 +109,28 @@ export function Architecture() {
             ['userData/graph/', 'RyuGraph', 'the §18 memory ontology: projects, skills, preferences, knowledge, sessions, components, and their edges + embeddings + full-text indexes'],
             ['userData/appdata.db', 'better-sqlite3 (WAL)', 'traces, tasks, mcp_calls, staged_writes, spend, approvals, audit_log, workflow checkpoints, skill bookkeeping'],
             ['userData/models/', 'files', 'the int8 ONNX reranker weights, downloaded on first retrieval'],
-            ['userData/backups/', 'files', 'pre-migration snapshots of both stores'],
+            ['userData/backups/', 'files', 'integrity-verified snapshots of both stores: automatic (scheduled) and manual, plus the pre-migration, pre-restore, and pre-reset safety snapshots'],
           ]}
         />
+
+        <H2>Durability and recovery</H2>
+        <P>
+          A torn or corrupt graph WAL — the classic aftermath of a hard kill — no longer bricks the
+          app. It is <Strong>quarantined and preserved</Strong>, never deleted, and the store
+          recovers to its last checkpoint. Periodic, dirty-gated WAL checkpointing bounds worst-case
+          loss from a hard kill to about two minutes, and per-subsystem boot diagnostics — surfaced
+          on the dashboard and via <Code>get_app_status</Code> — report exactly why any subsystem is
+          degraded.
+        </P>
+        <P>
+          Backups are first-class: a manual <Code>Backup now</Code> and automatic snapshots on a
+          chosen interval, with retention by count or age that only ever prunes automatic backups.
+          Any backup restores to that exact point — the current state is snapshotted first, so a
+          restore is itself undoable — and the whole store exports to a folder with machine-bound
+          secrets excluded. Every one of these graph-touching operations stages and applies at
+          launch, before the database opens, with an integrity-verified snapshot at each fail-safe
+          boundary.
+        </P>
 
         <H2>Data flow: a get_context call</H2>
         <P>

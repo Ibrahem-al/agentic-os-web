@@ -133,8 +133,10 @@ export function DownloadPage() {
             <a href={RELEASES} target="_blank" rel="noreferrer" className="text-accent hover:underline">
               GitHub Releases
             </a>
-            . macOS and Linux builds are produced from source with electron-builder (dmg and zip on a
-            Mac; AppImage and deb on Linux).
+            . The app checks that same feed and updates itself — in the background on launch and quit,
+            or on demand from Settings with live progress and a restart-to-install prompt. macOS and
+            Linux builds are produced from source with electron-builder (dmg and zip on a Mac;
+            AppImage and deb on Linux).
           </p>
         </Container>
       </section>

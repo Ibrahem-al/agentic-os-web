@@ -382,7 +382,7 @@ function Safety() {
             { v: 'local', l: 'Your memory graph, embeddings, and search index never leave your machine, and retrieval runs fully local. Reasoning is bring-your-own — an optional cloud key or your Claude subscription, off by default.' },
             { v: 'staged', l: "Claude's only write path is a proposed correction, validated and human-approved before it touches memory." },
             { v: 'sandboxed', l: 'Rule code runs in a Deno permission sandbox or a deny-by-default Docker container, never on the host.' },
-            { v: 'undoable', l: 'Every agent write logs a reversible delta. The graph is backed up before any migration runs.' },
+            { v: 'undoable', l: 'Every agent write logs a reversible delta, and the store is snapshotted before every migration, restore, and reset — so any change can be walked back.' },
           ].map((s) => (
             <Reveal key={s.v}>
               <div>
@@ -394,6 +394,63 @@ function Safety() {
             </Reveal>
           ))}
         </div>
+      </Container>
+    </section>
+  )
+}
+
+/* --------------------------------------------------------------- durability */
+
+function Durable() {
+  const pillars = [
+    {
+      v: 'backed up',
+      l: 'A manual "Backup now", plus automatic snapshots on the interval you choose — every 6 or 12 hours, daily, or weekly — with retention you set: keep the last N, or the last D days. Pruning only ever touches automatic backups.',
+    },
+    {
+      v: 'restorable',
+      l: 'Every backup is listed by kind, date, and size, and restores to that exact point. The current state is snapshotted first, so a restore is itself undoable. Export the whole store to a folder any time; machine-bound secrets stay behind.',
+    },
+    {
+      v: 'crash-safe',
+      l: 'A torn or corrupt graph WAL from a hard kill is quarantined and preserved — never deleted — and the store recovers to its last checkpoint. Periodic checkpointing bounds worst-case loss to about two minutes; boot diagnostics show why any subsystem is degraded.',
+    },
+    {
+      v: 'self-updating',
+      l: 'Check for updates on demand in Settings, with live download progress and a restart-to-install prompt you confirm — or let the background updater handle it on launch and quit, as it always has.',
+    },
+  ]
+  return (
+    <section className="border-b border-line py-20 sm:py-28">
+      <Container>
+        <Reveal>
+          <SectionTitle>And it doesn&apos;t lose your work.</SectionTitle>
+          <Lead className="mt-5">
+            Crash-safe storage, backups you can restore from, and updates that install themselves.
+            All of it runs on your machine — the memory graph never travels, only the app binary
+            does.
+          </Lead>
+        </Reveal>
+        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {pillars.map((s) => (
+            <Reveal key={s.v}>
+              <div>
+                <div className="font-mono text-[clamp(1.5rem,2.6vw,2rem)] tracking-tight text-accent">
+                  {s.v}
+                </div>
+                <p className="mt-2.5 text-[13.5px] leading-relaxed text-ink-mute">{s.l}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal className="mt-8">
+          <Callout tone="accent" title="Fail-safe at every boundary">
+            Every backup, restore, and reset is an integrity-verified snapshot, and every
+            graph-touching operation stages and applies at launch, before the database opens. A data
+            reset makes you type <span className="font-mono">RESET</span> to confirm, takes a final
+            snapshot first, and never deletes your backups.
+          </Callout>
+        </Reveal>
       </Container>
     </section>
   )
@@ -444,6 +501,7 @@ export function Home() {
       <Connect />
       <Cockpit />
       <Safety />
+      <Durable />
       <FinalCta />
     </>
   )

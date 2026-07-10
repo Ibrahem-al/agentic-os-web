@@ -128,6 +128,23 @@ cypher     → mutating? lane : readConn        // conservative regex detection
           newer than itself. <Code>appdata.db</Code> is snapshotted with <Code>VACUUM INTO</Code>{' '}
           before its own schema upgrades.
         </P>
+        <H3>Crash recovery</H3>
+        <P>
+          A torn or corrupt graph WAL from a hard kill is <Strong>quarantined and preserved</Strong>{' '}
+          rather than deleted, and the store recovers to its last checkpoint — a crash no longer
+          disables the app. Periodic, dirty-gated checkpointing bounds worst-case loss from a hard
+          kill to about two minutes.
+        </P>
+        <H3>Automatic and manual backups</H3>
+        <P>
+          Beyond the pre-migration snapshot, the store backs itself up on a schedule you set — every
+          6 or 12 hours, daily, or weekly — alongside a manual <Code>Backup now</Code>. Retention
+          keeps the last N or the last D days, and pruning only ever removes automatic backups. Any
+          backup restores to that exact point, snapshotting the current state first so the restore is
+          undoable; a data reset makes you type <Code>RESET</Code>, takes a final snapshot, and never
+          deletes backups. Each of these operations stages and applies at launch, before the database
+          opens.
+        </P>
         <H3>Your memory is never trapped</H3>
         <P>
           A weekly export job (Sunday 03:30) dumps every node and edge to Neo4j-compatible CSV plus a
